@@ -2,6 +2,8 @@
 import Button from '@components/common/Button.astro';
 import MetricBadge from '@components/common/MetricBadge.astro';
 import { siteConfig } from '@data/site-config';
+
+const base = import.meta.env.BASE_URL;
 ---
 
 <section class="py-20 md:py-32">
@@ -31,7 +33,7 @@ import { siteConfig } from '@data/site-config';
 
       <!-- CTAs -->
       <div class="mt-12 flex flex-col sm:flex-row items-center justify-center gap-4 animate-slide-up">
-        <Button href="/projects" variant="primary" size="lg">
+        <Button href={`${base}/projects`.replace(/\/+/g, '/')} variant="primary" size="lg">
           View Projects
         </Button>
         <Button href={siteConfig.urls.linkedin} variant="secondary" size="lg" external>
