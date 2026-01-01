@@ -1,0 +1,189 @@
+---
+/**
+ * Engagement Feedback Banner (Story 6)
+ * - Collects thumbs up/down feedback
+ * - Stores vote in localStorage to prevent duplicates
+ * - Sends GA4 events if analytics configured
+ * - Dismissible and remembers dismissal
+ */
+---
+
+<div
+  id="feedback-banner"
+  class="fixed bottom-4 right-4 z-40 hidden"
+  role="complementary"
+  aria-label="Page feedback"
+>
+  <div class="bg-dark-800 border border-dark-700 rounded-xl shadow-lg p-4 max-w-xs">
+    <!-- Initial State -->
+    <div id="feedback-prompt" class="flex items-center gap-4">
+      <span class="text-dark-300 text-sm">Was this helpful?</span>
+
+      <div class="flex items-center gap-2">
+        <button
+          id="feedback-up"
+          class="w-11 h-11 flex items-center justify-center rounded-lg bg-dark-700 hover:bg-primary-500/20 hover:text-primary-400 transition-colors text-dark-300"
+          aria-label="Yes, this was helpful"
+          type="button"
+        >
+          <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M14 10h4.764a2 2 0 011.789 2.894l-3.5 7A2 2 0 0115.263 21h-4.017c-.163 0-.326-.02-.485-.06L7 20m7-10V5a2 2 0 00-2-2h-.095c-.5 0-.905.405-.905.905 0 .714-.211 1.412-.608 2.006L7 11v9m7-10h-2M7 20H5a2 2 0 01-2-2v-6a2 2 0 012-2h2.5" />
+          </svg>
+        </button>
+
+        <button
+          id="feedback-down"
+          class="w-11 h-11 flex items-center justify-center rounded-lg bg-dark-700 hover:bg-red-500/20 hover:text-red-400 transition-colors text-dark-300"
+          aria-label="No, this was not helpful"
+          type="button"
+        >
+          <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 14H5.236a2 2 0 01-1.789-2.894l3.5-7A2 2 0 018.736 3h4.018a2 2 0 01.485.06l3.76.94m-7 10v5a2 2 0 002 2h.096c.5 0 .905-.405.905-.904 0-.715.211-1.413.608-2.008L17 13V4m-7 10h2m5-10h2a2 2 0 012 2v6a2 2 0 01-2 2h-2.5" />
+          </svg>
+        </button>
+      </div>
+
+      <button
+        id="feedback-dismiss"
+        class="w-8 h-8 flex items-center justify-center rounded-lg hover:bg-dark-700 transition-colors text-dark-400 hover:text-dark-300"
+        aria-label="Dismiss feedback prompt"
+        type="button"
+      >
+        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
+        </svg>
+      </button>
+    </div>
+
+    <!-- Thank You State -->
+    <div id="feedback-thanks" class="hidden text-center py-2">
+      <p class="text-primary-400 font-medium">Thanks for your feedback!</p>
+    </div>
+  </div>
+</div>
+
+<script>
+  // Type declaration for Google Analytics gtag
+  declare global {
+    interface Window {
+      gtag?: (...args: unknown[]) => void;
+    }
+  }
+
+  const STORAGE_KEY = 'portfolio-feedback';
+  const DISMISS_KEY = 'portfolio-feedback-dismissed';
+
+  interface FeedbackData {
+    page: string;
+    vote: 'up' | 'down';
+    timestamp: string;
+  }
+
+  function getFeedbackData(): FeedbackData | null {
+    try {
+      const data = localStorage.getItem(STORAGE_KEY);
+      return data ? JSON.parse(data) : null;
+    } catch {
+      return null;
+    }
+  }
+
+  function saveFeedback(vote: 'up' | 'down'): void {
+    const data: FeedbackData = {
+      page: window.location.pathname,
+      vote,
+      timestamp: new Date().toISOString(),
+    };
+    localStorage.setItem(STORAGE_KEY, JSON.stringify(data));
+  }
+
+  function isDismissed(): boolean {
+    return localStorage.getItem(DISMISS_KEY) === 'true';
+  }
+
+  function setDismissed(): void {
+    localStorage.setItem(DISMISS_KEY, 'true');
+  }
+
+  function hasVotedOnPage(): boolean {
+    const data = getFeedbackData();
+    return data?.page === window.location.pathname;
+  }
+
+  function sendAnalyticsEvent(vote: 'up' | 'down'): void {
+    // Send to GA4 if available
+    if (window.gtag) {
+      window.gtag('event', 'feedback_submitted', {
+        event_category: 'engagement',
+        event_label: window.location.pathname,
+        value: vote === 'up' ? 1 : 0,
+        feedback_type: vote,
+      });
+    }
+  }
+
+  function initFeedbackBanner(): void {
+    const banner = document.getElementById('feedback-banner');
+    const prompt = document.getElementById('feedback-prompt');
+    const thanks = document.getElementById('feedback-thanks');
+    const upBtn = document.getElementById('feedback-up');
+    const downBtn = document.getElementById('feedback-down');
+    const dismissBtn = document.getElementById('feedback-dismiss');
+
+    if (!banner || !prompt || !thanks || !upBtn || !downBtn || !dismissBtn) return;
+
+    // Don't show if dismissed or already voted on this page
+    if (isDismissed() || hasVotedOnPage()) return;
+
+    // Show banner after 3 seconds
+    setTimeout(() => {
+      banner.classList.remove('hidden');
+      banner.classList.add('animate-slide-up');
+    }, 3000);
+
+    function handleVote(vote: 'up' | 'down'): void {
+      saveFeedback(vote);
+      sendAnalyticsEvent(vote);
+
+      // Show thank you message
+      prompt.classList.add('hidden');
+      thanks.classList.remove('hidden');
+
+      // Hide banner after 2 seconds
+      setTimeout(() => {
+        banner.classList.add('hidden');
+      }, 2000);
+    }
+
+    upBtn.addEventListener('click', () => handleVote('up'));
+    downBtn.addEventListener('click', () => handleVote('down'));
+
+    dismissBtn.addEventListener('click', () => {
+      setDismissed();
+      banner.classList.add('hidden');
+    });
+  }
+
+  // Initialize on page load
+  document.addEventListener('DOMContentLoaded', initFeedbackBanner);
+
+  // Also handle Astro page transitions
+  document.addEventListener('astro:page-load', initFeedbackBanner);
+</script>
+
+<style>
+  @keyframes slideUp {
+    from {
+      opacity: 0;
+      transform: translateY(1rem);
+    }
+    to {
+      opacity: 1;
+      transform: translateY(0);
+    }
+  }
+
+  .animate-slide-up {
+    animation: slideUp 0.3s ease-out;
+  }
+</style>

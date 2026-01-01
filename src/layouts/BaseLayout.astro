@@ -3,6 +3,7 @@ import '@/styles/global.css';
 import SEOHead from '@components/seo/SEOHead.astro';
 import Header from '@components/layout/Header.astro';
 import Footer from '@components/layout/Footer.astro';
+import FeedbackBanner from '@components/common/FeedbackBanner.astro';
 import { siteConfig } from '@data/site-config';
 
 interface Props {
@@ -46,5 +47,7 @@ const { title, description, ogImage } = Astro.props;
     </main>
 
     <Footer />
+
+    <FeedbackBanner />
   </body>
 </html>
