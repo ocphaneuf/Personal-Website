@@ -1,21 +1,14 @@
 ---
 import { siteConfig } from '@data/site-config';
 
-const base = import.meta.env.BASE_URL;
 const currentPath = Astro.url.pathname;
-
-// Helper to check if current path matches nav item
-const isActive = (href: string) => {
-  const fullHref = `${base}${href}`.replace(/\/+/g, '/');
-  return currentPath === fullHref || currentPath === fullHref + '/';
-};
 ---
 
 <header class="sticky top-0 z-50 bg-dark-900/95 backdrop-blur-sm border-b border-dark-800">
   <nav class="container-custom">
     <div class="flex items-center justify-between h-16">
       <!-- Logo -->
-      <a href={base} class="text-xl font-bold text-white hover:text-primary-400 transition-colors">
+      <a href="/Personal-Website/" class="text-xl font-bold text-white hover:text-primary-400 transition-colors">
         {siteConfig.name}
       </a>
 
@@ -23,9 +16,9 @@ const isActive = (href: string) => {
       <div class="hidden md:flex items-center gap-8">
         {siteConfig.navigation.map((item) => (
           <a
-            href={`${base}${item.href}`.replace(/\/+/g, '/')}
+            href={item.href}
             class={`text-sm font-medium transition-colors ${
-              isActive(item.href)
+              currentPath === item.href || currentPath === item.href + '/'
                 ? 'text-primary-400'
                 : 'text-dark-300 hover:text-white'
             }`}
@@ -77,9 +70,9 @@ const isActive = (href: string) => {
     <nav class="flex-1 flex flex-col items-center justify-center gap-8">
       {siteConfig.navigation.map((item) => (
         <a
-          href={`${base}${item.href}`.replace(/\/+/g, '/')}
+          href={item.href}
           class={`text-2xl font-medium transition-colors ${
-            isActive(item.href)
+            currentPath === item.href || currentPath === item.href + '/'
               ? 'text-primary-400'
               : 'text-dark-300 hover:text-white'
           }`}

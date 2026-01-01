@@ -26,9 +26,9 @@ export const siteConfig = {
   ],
 
   navigation: [
-    { label: "Projects", href: "/projects" },
-    { label: "About", href: "/about" },
-    { label: "Contact", href: "/contact" },
+    { label: "Projects", href: "/Personal-Website/projects" },
+    { label: "About", href: "/Personal-Website/about" },
+    { label: "Contact", href: "/Personal-Website/contact" },
   ],
 };
 
