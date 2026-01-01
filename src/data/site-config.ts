@@ -6,17 +6,17 @@ export const siteConfig = {
 
   urls: {
     site: "https://ocphaneuf.github.io",
-    linkedin: "https://linkedin.com/in/ocphaneuf",
+    linkedin: "https://www.linkedin.com/in/olivier-phaneuf-cmgr-mcmi-2b085a82/",
     github: "https://github.com/ocphaneuf",
     email: "ocphaneuf@gmail.com",
   },
 
   formspree: {
-    formId: "TO_BE_CONFIGURED",
+    formId: "mgovvraq",
   },
 
   analytics: {
-    ga4Id: "TO_BE_CONFIGURED",
+    ga4Id: "G-09TTSCQJTB",
   },
 
   metrics: [
