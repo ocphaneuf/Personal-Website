@@ -412,11 +412,50 @@ trigger: push to main
 steps:
   1. Checkout repository
   2. Setup Node.js 20
-  3. Install dependencies (npm ci)
-  4. Build site (npm run build)
-  5. Upload to GitHub Pages
-  6. Deploy
+  3. Configure Pages (actions/configure-pages@v4) # CRITICAL for GitHub Pages
+  4. Install dependencies (npm ci)
+  5. Build site (npm run build)
+  6. Upload artifact (actions/upload-pages-artifact@v3)
+  7. Deploy (actions/deploy-pages@v4)
 ```
+
+### GitHub Pages Configuration (IMPORTANT)
+
+**Base Path Configuration:**
+When deploying to GitHub Pages as a project site (e.g., `username.github.io/repo-name`), you must:
+
+1. **Set base path in `astro.config.mjs`:**
+   ```javascript
+   export default defineConfig({
+     site: 'https://ocphaneuf.github.io',
+     base: '/Personal-Website',  // Must match repository name
+     // ...
+   });
+   ```
+
+2. **Hardcode base path in navigation links** (in `site-config.ts`):
+   ```typescript
+   navigation: [
+     { label: "Projects", href: "/Personal-Website/projects" },
+     { label: "About", href: "/Personal-Website/about" },
+     { label: "Contact", href: "/Personal-Website/contact" },
+   ],
+   ```
+
+   **Why hardcode?** The `import.meta.env.BASE_URL` approach can fail to render correctly in production builds. Hardcoding is more reliable.
+
+3. **Include `actions/configure-pages@v4`** in the GitHub Actions workflow. This step is **critical** - without it, deployments may succeed but the site returns 404.
+
+4. **All internal links must include the base path:**
+   - Logo: `href="/Personal-Website/"`
+   - Buttons: `href="/Personal-Website/projects"`
+   - Favicon: `href="/Personal-Website/favicon.svg"`
+
+**Troubleshooting 404 errors:**
+- Verify GitHub Pages Source is set to "GitHub Actions" (not branch)
+- Check that `actions/configure-pages@v4` is in the workflow
+- Ensure all navigation links include the full base path
+- Test locally with `npm run preview` before pushing
 
 ### Configuration Management
 - Environment-specific config: None needed (static site)
@@ -605,3 +644,5 @@ Note: Includes "CV available on request" messaging above form
 | 2025-12-31 | Dark theme only | Modern tech aesthetic, simpler | Light theme, toggle |
 | 2025-12-31 | Formspree over custom | Zero backend maintenance | Netlify Forms, custom API |
 | 2025-12-31 | Vitest for testing | Fast, modern, works with Astro | Jest, Playwright |
+| 2026-01-01 | Hardcoded base paths over import.meta.env.BASE_URL | More reliable in production builds, avoids 404 errors | Dynamic BASE_URL |
+| 2026-01-01 | Added configure-pages action | Required for GitHub Pages deployment to work correctly | Manual configuration |

@@ -227,6 +227,48 @@ const sortedProjects = projects.sort((a, b) => a.data.order - b.data.order);
 </div>
 ```
 
+## GitHub Pages Deployment (CRITICAL)
+
+This site deploys to GitHub Pages as a **project site** at `https://ocphaneuf.github.io/Personal-Website/`. This requires special configuration:
+
+### Base Path Configuration
+1. **`astro.config.mjs`** must include:
+   ```javascript
+   base: '/Personal-Website',  // Must match repository name exactly
+   ```
+
+2. **All internal links must be hardcoded** with the base path in `site-config.ts`:
+   ```typescript
+   navigation: [
+     { label: "Projects", href: "/Personal-Website/projects" },
+     { label: "About", href: "/Personal-Website/about" },
+     { label: "Contact", href: "/Personal-Website/contact" },
+   ],
+   ```
+
+   **WARNING:** Do NOT use `import.meta.env.BASE_URL` for navigation links - it doesn't render reliably in production builds.
+
+3. **Other hardcoded paths:**
+   - Logo link: `href="/Personal-Website/"`
+   - Favicon: `href="/Personal-Website/favicon.svg"`
+   - Any internal buttons/links in page content
+
+### GitHub Actions Workflow
+The workflow at `.github/workflows/deploy.yml` must include `actions/configure-pages@v4`:
+
+```yaml
+- name: Setup Pages
+  uses: actions/configure-pages@v4  # CRITICAL - without this, site returns 404
+```
+
+### Troubleshooting 404 Errors
+If the site deploys but returns 404:
+1. Check GitHub Pages Source is set to "GitHub Actions" (Settings → Pages)
+2. Verify `actions/configure-pages@v4` is in the workflow
+3. Confirm all navigation links include `/Personal-Website/` prefix
+4. Test locally with `npm run preview` - visit `localhost:4321/Personal-Website/`
+5. Try re-running the GitHub Actions workflow
+
 ## Project-Specific Notes
 - **No light mode** - dark theme only (Modern Tech aesthetic)
 - **Mobile-first** - test on 375px width as primary breakpoint
