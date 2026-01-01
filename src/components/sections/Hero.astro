@@ -1,0 +1,43 @@
+---
+import Button from '@components/common/Button.astro';
+import MetricBadge from '@components/common/MetricBadge.astro';
+import { siteConfig } from '@data/site-config';
+---
+
+<section class="py-20 md:py-32">
+  <div class="container-custom">
+    <div class="max-w-3xl mx-auto text-center">
+      <!-- Title -->
+      <h1 class="animate-fade-in">
+        {siteConfig.name}
+      </h1>
+
+      <!-- Subtitle -->
+      <p class="mt-4 text-xl md:text-2xl text-primary-400 font-medium animate-slide-up">
+        {siteConfig.title}
+      </p>
+
+      <!-- Tagline -->
+      <p class="mt-6 text-lg md:text-xl text-dark-300 leading-relaxed animate-slide-up">
+        {siteConfig.tagline}
+      </p>
+
+      <!-- Metrics -->
+      <div class="mt-12 grid grid-cols-1 sm:grid-cols-3 gap-4 animate-slide-up">
+        {siteConfig.metrics.map((metric) => (
+          <MetricBadge value={metric.value} label={metric.label} />
+        ))}
+      </div>
+
+      <!-- CTAs -->
+      <div class="mt-12 flex flex-col sm:flex-row items-center justify-center gap-4 animate-slide-up">
+        <Button href="/projects" variant="primary" size="lg">
+          View Projects
+        </Button>
+        <Button href={siteConfig.urls.linkedin} variant="secondary" size="lg" external>
+          LinkedIn Profile
+        </Button>
+      </div>
+    </div>
+  </div>
+</section>

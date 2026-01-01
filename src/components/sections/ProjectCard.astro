@@ -1,0 +1,147 @@
+---
+import Card from '@components/common/Card.astro';
+import TechTag from '@components/common/TechTag.astro';
+import Button from '@components/common/Button.astro';
+
+interface Props {
+  title: string;
+  problem: string;
+  solution: string;
+  techStack: string[];
+  impact: string;
+  demoUrl?: string;
+  githubUrl?: string;
+  screenshot?: string;
+  status: 'live' | 'coming-soon' | 'in-progress';
+  progressPercent?: number;
+}
+
+const {
+  title,
+  problem,
+  solution,
+  techStack,
+  impact,
+  demoUrl,
+  githubUrl,
+  screenshot,
+  status,
+  progressPercent = 0,
+} = Astro.props;
+
+const statusConfig = {
+  'live': { label: 'Live', class: 'bg-primary-500/20 text-primary-400 border-primary-500/50' },
+  'coming-soon': { label: 'Coming Soon', class: 'bg-dark-600/50 text-dark-300 border-dark-500' },
+  'in-progress': { label: `${progressPercent}% Complete`, class: 'bg-amber-500/20 text-amber-400 border-amber-500/50' },
+};
+---
+
+<Card class="flex flex-col h-full">
+  <!-- Header with Status -->
+  <div class="flex items-start justify-between gap-4 mb-4">
+    <h3 class="text-xl font-semibold text-white">{title}</h3>
+    <span class={`px-3 py-1 text-xs font-medium rounded-full border ${statusConfig[status].class}`}>
+      {statusConfig[status].label}
+    </span>
+  </div>
+
+  <!-- Progress Bar for in-progress -->
+  {status === 'in-progress' && (
+    <div class="mb-4">
+      <div class="h-2 bg-dark-700 rounded-full overflow-hidden">
+        <div
+          class="h-full bg-gradient-to-r from-amber-500 to-primary-500 transition-all duration-500"
+          style={`width: ${progressPercent}%`}
+        ></div>
+      </div>
+    </div>
+  )}
+
+  <!-- Screenshot / Demo Area -->
+  {screenshot && (
+    <div class="relative mb-4 rounded-lg overflow-hidden bg-dark-700 aspect-video" id={`demo-${title.toLowerCase().replace(/\s+/g, '-')}`}>
+      <img
+        src={screenshot}
+        alt={`${title} screenshot`}
+        class="w-full h-full object-cover"
+        loading="lazy"
+      />
+      {status === 'live' && demoUrl && (
+        <button
+          class="absolute inset-0 flex items-center justify-center bg-dark-900/70 opacity-0 hover:opacity-100 transition-opacity group"
+          data-demo-url={demoUrl}
+          data-container-id={`demo-${title.toLowerCase().replace(/\s+/g, '-')}`}
+          aria-label={`Load ${title} demo`}
+        >
+          <span class="btn-primary group-hover:scale-105 transition-transform">
+            Load Interactive Demo
+          </span>
+        </button>
+      )}
+    </div>
+  )}
+
+  <!-- Problem -->
+  <div class="mb-3">
+    <span class="text-xs font-medium text-dark-400 uppercase tracking-wide">Problem</span>
+    <p class="text-dark-300 mt-1">{problem}</p>
+  </div>
+
+  <!-- Solution -->
+  <div class="mb-3">
+    <span class="text-xs font-medium text-dark-400 uppercase tracking-wide">Solution</span>
+    <p class="text-dark-300 mt-1">{solution}</p>
+  </div>
+
+  <!-- Impact -->
+  <div class="mb-4">
+    <span class="text-xs font-medium text-dark-400 uppercase tracking-wide">Impact</span>
+    <p class="text-primary-400 font-medium mt-1">{impact}</p>
+  </div>
+
+  <!-- Tech Stack -->
+  <div class="mb-6">
+    <span class="text-xs font-medium text-dark-400 uppercase tracking-wide block mb-2">Tech Stack</span>
+    <div class="flex flex-wrap gap-2">
+      {techStack.map((tech) => (
+        <TechTag tech={tech} />
+      ))}
+    </div>
+  </div>
+
+  <!-- Actions -->
+  <div class="mt-auto flex gap-3">
+    {status === 'live' && demoUrl && (
+      <Button href={demoUrl} variant="primary" size="sm" external>
+        View Demo
+      </Button>
+    )}
+    {githubUrl && (
+      <Button href={githubUrl} variant="secondary" size="sm" external>
+        GitHub
+      </Button>
+    )}
+  </div>
+</Card>
+
+<script>
+  // Handle demo iframe loading
+  document.querySelectorAll('[data-demo-url]').forEach((button) => {
+    button.addEventListener('click', () => {
+      const url = button.getAttribute('data-demo-url');
+      const containerId = button.getAttribute('data-container-id');
+      const container = document.getElementById(containerId || '');
+
+      if (container && url) {
+        container.innerHTML = `
+          <iframe
+            src="${url}"
+            class="w-full h-full border-0"
+            loading="lazy"
+            title="Project demo"
+          ></iframe>
+        `;
+      }
+    });
+  });
+</script>

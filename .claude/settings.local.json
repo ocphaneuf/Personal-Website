@@ -1,0 +1,11 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(dir \"C:\\\\Users\\\\ocpha\\\\Documents\\\\GitHub\\\\Personal Website\" /s /b)",
+      "WebSearch",
+      "WebFetch(domain:docs.astro.build)",
+      "Bash(dir:*)",
+      "Bash(npm install:*)"
+    ]
+  }
+}

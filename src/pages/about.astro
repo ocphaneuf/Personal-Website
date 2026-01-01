@@ -1,0 +1,90 @@
+---
+import BaseLayout from '@layouts/BaseLayout.astro';
+import Button from '@components/common/Button.astro';
+import { siteConfig } from '@data/site-config';
+---
+
+<BaseLayout
+  title="About"
+  description="Learn about Olivier Phaneuf's journey in delivery leadership, from Ocado to Network Rail."
+>
+  <section class="py-16 md:py-24">
+    <div class="container-custom">
+      <div class="max-w-3xl mx-auto">
+        <!-- Header -->
+        <h1 class="text-3xl md:text-4xl font-bold text-white mb-8">
+          About Me
+        </h1>
+
+        <!-- Career Narrative -->
+        <div class="prose prose-invert prose-lg max-w-none">
+          <p class="text-xl text-dark-200 leading-relaxed mb-6">
+            I'm a Senior Delivery Leader with a passion for combining traditional
+            delivery excellence with modern AI-powered tools to solve complex
+            portfolio challenges.
+          </p>
+
+          <h2 class="text-2xl font-semibold text-white mt-10 mb-4">
+            Current Role
+          </h2>
+          <p class="text-dark-300 leading-relaxed mb-6">
+            At <span class="text-primary-400 font-medium">Network Rail</span>, I lead
+            delivery for a £7m portfolio of digital transformation initiatives.
+            My focus is on ensuring our projects deliver measurable value while
+            maintaining the highest standards of governance and stakeholder engagement.
+          </p>
+
+          <h2 class="text-2xl font-semibold text-white mt-10 mb-4">
+            Previous Experience
+          </h2>
+          <p class="text-dark-300 leading-relaxed mb-6">
+            At <span class="text-primary-400 font-medium">Ocado</span>, I managed
+            a £40m+ portfolio spanning multiple technology streams. This experience
+            taught me the importance of scalable delivery practices and data-driven
+            decision making at enterprise scale.
+          </p>
+
+          <h2 class="text-2xl font-semibold text-white mt-10 mb-4">
+            Why I Build AI Tools
+          </h2>
+          <p class="text-dark-300 leading-relaxed mb-6">
+            After years of manually producing status reports, optimizing resource
+            allocations, and tracking risks across sprawling portfolios, I recognized
+            that many delivery leadership tasks are ripe for AI augmentation. The
+            projects on this site represent my exploration of how AI can help
+            delivery leaders focus on what matters most: enabling their teams to
+            succeed.
+          </p>
+
+          <h2 class="text-2xl font-semibold text-white mt-10 mb-4">
+            Credentials
+          </h2>
+          <ul class="text-dark-300 space-y-2 mb-8">
+            <li class="flex items-center gap-2">
+              <span class="text-primary-400">✓</span>
+              Chartered Manager (CMgr MCMI) - Distinction
+            </li>
+            <li class="flex items-center gap-2">
+              <span class="text-primary-400">✓</span>
+              Experienced in Agile, Waterfall, and hybrid delivery methodologies
+            </li>
+            <li class="flex items-center gap-2">
+              <span class="text-primary-400">✓</span>
+              Track record of delivering complex technology portfolios
+            </li>
+          </ul>
+        </div>
+
+        <!-- CTA -->
+        <div class="mt-12 flex flex-col sm:flex-row gap-4">
+          <Button href="/projects" variant="primary">
+            View My Projects
+          </Button>
+          <Button href={siteConfig.urls.linkedin} variant="secondary" external>
+            Connect on LinkedIn
+          </Button>
+        </div>
+      </div>
+    </div>
+  </section>
+</BaseLayout>

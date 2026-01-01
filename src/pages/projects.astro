@@ -1,0 +1,55 @@
+---
+import BaseLayout from '@layouts/BaseLayout.astro';
+import ProjectCard from '@components/sections/ProjectCard.astro';
+import { getCollection } from 'astro:content';
+
+const projects = await getCollection('projects');
+const sortedProjects = projects.sort((a, b) => a.data.order - b.data.order);
+---
+
+<BaseLayout
+  title="Projects"
+  description="AI-powered delivery management tools built to solve real portfolio challenges."
+>
+  <section class="py-16 md:py-24">
+    <div class="container-custom">
+      <!-- Header -->
+      <div class="max-w-2xl mb-12">
+        <h1 class="text-3xl md:text-4xl font-bold text-white mb-4">
+          Projects
+        </h1>
+        <p class="text-lg text-dark-300">
+          AI-powered tools designed to solve real challenges in delivery leadership.
+          Each project addresses pain points I've experienced managing £40m+ portfolios.
+        </p>
+      </div>
+
+      <!-- Projects Grid -->
+      <div class="grid grid-cols-1 lg:grid-cols-2 gap-8">
+        {sortedProjects.map((project) => (
+          <ProjectCard
+            title={project.data.title}
+            problem={project.data.problem}
+            solution={project.data.solution}
+            techStack={project.data.techStack}
+            impact={project.data.impact}
+            demoUrl={project.data.demoUrl}
+            githubUrl={project.data.githubUrl}
+            screenshot={project.data.screenshot}
+            status={project.data.status}
+            progressPercent={project.data.progressPercent}
+          />
+        ))}
+      </div>
+
+      <!-- More Coming -->
+      <div class="mt-16 text-center">
+        <p class="text-dark-400">
+          More projects in development. Check back soon or{' '}
+          <a href="/contact" class="text-primary-400 hover:text-primary-300">get in touch</a>
+          {' '}to discuss.
+        </p>
+      </div>
+    </div>
+  </section>
+</BaseLayout>
